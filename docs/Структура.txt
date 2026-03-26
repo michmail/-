@@ -1,0 +1,15 @@
+main.py
+├── Ввод-вывод результата.py (ввод данных, вывод результата)
+├── базовая формула.py (расчет стоимости цветов)
+├── скидки, доп.услуги.py (скидки и доп. услуги)
+└── логирование.py (логирование расчетов)
+
+
+## Взаимодействие модулей
+
+1. main.py вызывает input_output.get_user_data() → получает словарь с данными
+2. main.py передает данные в calculator.calculate_base_cost()
+3. main.py передает данные в discounts.calculate_extras()
+4. main.py передает данные в discounts.apply_discount()
+5. main.py передает итог в input_output.show_result()
+6. main.py передает данные и итог в logger.log_calculation()
