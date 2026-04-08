@@ -14,7 +14,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import input_output
 import calculator
-import discounts
 import logger
 
 
@@ -31,57 +30,18 @@ def run_calculator():
             # Показываем введенные данные
             input_output.show_user_data(user_data)
 
-            # Расчет базовой стоимости
-            base_cost = calculator.calculate_base_cost(
-                user_data['flower_type'],
-                user_data['quantity']
-            )
-
-            # Расчет стоимости упаковки
-            packaging_cost = calculator.calculate_packaging_cost(
-                user_data['packaging']
-            )
-
-            # Расчет стоимости услуг
-            services_cost = calculator.calculate_services_cost(
-                user_data['delivery'],
-                user_data['card']
-            )
-
-            # Промежуточная сумма
-            subtotal = base_cost + packaging_cost + services_cost
-
-            print("\n--- РАСЧЕТ СКИДОК ---")
-
-            # Расчет скидки
-            discount_amount = discounts.calculate_discount(
-                user_data['quantity'],
-                user_data['self_pickup'],
-                subtotal,
-                flower_type=user_data['flower_type']
-            )
-
-            # Итоговая стоимость
-            total_cost = subtotal - discount_amount
-
-            # Формируем результат
-            result_data = {
-                'base_cost': base_cost,
-                'packaging_cost': packaging_cost,
-                'services_cost': services_cost,
-                'subtotal': subtotal,
-                'discount': discount_amount,
-                'total_cost': total_cost
-            }
+            # ===== ОДНА ФУНКЦИЯ ВМЕСТО МНОГИХ =====
+            result = calculator.calculate_total(user_data)
+            # =====================================
 
             # Выводим результат
-            input_output.show_result(result_data)
+            input_output.show_result(result)
 
             # Показываем сводку
-            input_output.show_bouquet_summary(user_data, result_data)
+            input_output.show_bouquet_summary(user_data, result)
 
             # Логируем расчет
-            if logger.log_calculation(user_data, result_data):
+            if logger.log_calculation(user_data, result):
                 print(f"\n✓ Расчет сохранен в лог: {logger.get_log_path()}")
             else:
                 print("\n✗ Ошибка при сохранении лога")
@@ -120,9 +80,9 @@ def show_history():
         print(f"\n--- ЗАПИСЬ {i} ---")
         # Показываем только первые строки каждой записи
         lines = entry.split('\n')
-        for line in lines[:10]:  # Показываем первые 10 строк
+        for line in lines[:12]:  # Показываем первые 12 строк
             print(line)
-        if len(lines) > 10:
+        if len(lines) > 12:
             print("  ...")
 
     print("\n" + "=" * 60)

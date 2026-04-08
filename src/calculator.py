@@ -302,6 +302,85 @@ def calculate_full_price(user_data):
     }
 
 
+def calculate_total(user_data: Dict) -> Dict:
+    """
+    Главная функция расчета полной стоимости букета.
+    Объединяет все модули: calculator, discounts.
+
+    Args:
+        user_data (dict): Словарь с данными пользователя:
+            - flower_type (int): тип цветов (1-3)
+            - quantity (int): количество цветов
+            - packaging (int): тип упаковки (1-3)
+            - delivery (bool): доставка
+            - card (bool): открытка
+            - self_pickup (bool): самовывоз
+
+    Returns:
+        dict: Полный результат расчета:
+            - base_cost (float): стоимость цветов
+            - packaging_cost (float): стоимость упаковки
+            - services_cost (float): стоимость услуг
+            - subtotal (float): промежуточная сумма
+            - discount (float): сумма скидки
+            - discount_rate (float): процент скидки
+            - total_cost (float): итоговая сумма
+
+    Examples:
+        >>> user_data = {'flower_type': 1, 'quantity': 15, 'packaging': 2,
+        ...              'delivery': True, 'card': False, 'self_pickup': False}
+        >>> result = calculate_total(user_data)
+        >>> result['total_cost']
+        2650.0
+    """
+    from discounts import calculate_discount
+
+    # 1. Базовая стоимость цветов
+    base_cost = calculate_base_cost(
+        user_data['flower_type'],
+        user_data['quantity']
+    )
+
+    # 2. Стоимость упаковки
+    packaging_cost = calculate_packaging_cost(
+        user_data['packaging']
+    )
+
+    # 3. Стоимость услуг
+    services_cost = calculate_services_cost(
+        user_data['delivery'],
+        user_data['card']
+    )
+
+    # 4. Промежуточная сумма
+    subtotal = base_cost + packaging_cost + services_cost
+
+    # 5. Скидка
+    discount = calculate_discount(
+        user_data['quantity'],
+        user_data['self_pickup'],
+        subtotal,
+        flower_type=user_data['flower_type']
+    )
+
+    # 6. Процент скидки
+    discount_rate = 0
+    if subtotal > 0:
+        discount_rate = (discount / subtotal) * 100
+
+    # 7. Итоговая стоимость
+    total_cost = subtotal - discount
+
+    return {
+        'base_cost': base_cost,
+        'packaging_cost': packaging_cost,
+        'services_cost': services_cost,
+        'subtotal': subtotal,
+        'discount': discount,
+        'discount_rate': discount_rate,
+        'total_cost': total_cost
+    }
+
 # Словари для внешнего использования
 __all__ = [
     'FLOWER_PRICES',
@@ -311,6 +390,7 @@ __all__ = [
     'calculate_packaging_cost',
     'calculate_services_cost',
     'calculate_subtotal',
+    'calculate_total',           # ← новая функция
     'get_flower_name',
     'get_packaging_name',
     'get_flower_price',
