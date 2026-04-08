@@ -1,44 +1,116 @@
+#!/usr/bin/env python3
 """
 Главный модуль программы "Калькулятор стоимости букета цветов".
-Временная версия для тестирования модуля ввода/вывода.
+
+Author: [Твое имя]
+Date: 2026-03-26
 """
 
+import sys
+import os
+
+# Добавляем путь к модулям
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 import input_output
+import calculator
+import discounts
+import logger
+
+
+def run_calculator():
+    """
+    Основной режим работы калькулятора.
+    """
+    try:
+        input_output.show_info("Добро пожаловать в калькулятор стоимости букета!")
+
+        while True:
+            # Запрашиваем данные
+            user_data = input_output.get_user_data()
+
+            # Показываем введенные данные
+            input_output.show_user_data(user_data)
+
+            # Расчет базовой стоимости
+            base_cost = calculator.calculate_base_cost(
+                user_data['flower_type'],
+                user_data['quantity']
+            )
+
+            # Расчет стоимости упаковки
+            packaging_cost = calculator.calculate_packaging_cost(
+                user_data['packaging']
+            )
+
+            # Расчет стоимости услуг
+            services_cost = calculator.calculate_services_cost(
+                user_data['delivery'],
+                user_data['card']
+            )
+
+            # Промежуточная сумма
+            subtotal = base_cost + packaging_cost + services_cost
+
+            # Расчет скидки
+            discount_amount = discounts.calculate_discount(
+                user_data['quantity'],
+                user_data['self_pickup'],
+                subtotal
+            )
+
+            # Итоговая стоимость
+            total_cost = subtotal - discount_amount
+
+            # Формируем результат
+            result_data = {
+                'base_cost': base_cost,
+                'packaging_cost': packaging_cost,
+                'services_cost': services_cost,
+                'discount': discount_amount,
+                'total_cost': total_cost
+            }
+
+            # Выводим результат
+            input_output.show_result(result_data)
+
+            # Показываем сводку
+            input_output.show_bouquet_summary(user_data, result_data)
+
+            # Логируем расчет
+            logger.log_calculation(user_data, result_data)
+
+            # Спрашиваем о продолжении
+            if not input_output.confirm_action("Выполнить новый расчет?"):
+                input_output.show_info("Спасибо за использование калькулятора!")
+                break
+
+            input_output.clear_screen()
+
+    except KeyboardInterrupt:
+        input_output.show_error("Программа прервана пользователем")
+        sys.exit(1)
+    except Exception as e:
+        input_output.show_error(f"Произошла ошибка: {e}")
+        sys.exit(1)
+
 
 def main():
-    """
-    Главная функция программы.
-    """
-    print("Запуск калькулятора стоимости букета цветов")
+    """Главная функция программы."""
+    while True:
+        options = [
+            "Калькулятор букета",
+            "Выход"
+        ]
 
-    # Запрашиваем данные у пользователя
-    user_data = input_output.get_user_data()
+        choice = input_output.show_menu(options, "КАЛЬКУЛЯТОР БУКЕТА ЦВЕТОВ")
 
-    # Показываем, какие данные ввел пользователь (для проверки)
-    print("\n" + "="*50)
-    print("ВВЕДЕННЫЕ ДАННЫЕ")
-    print("="*50)
-    print(f"Тип цветов: {user_data['flower_type']}")
-    print(f"Количество: {user_data['quantity']} шт")
-    print(f"Упаковка: {user_data['packaging']}")
-    print(f"Доставка: {'Да' if user_data['delivery'] else 'Нет'}")
-    print(f"Открытка: {'Да' if user_data['card'] else 'Нет'}")
-    print(f"Самовывоз: {'Да' if user_data['self_pickup'] else 'Нет'}")
+        if choice == 1:
+            run_calculator()
+        elif choice == 2:
+            input_output.show_info("До свидания!")
+            break
 
-    # Временные данные для демонстрации вывода
-    # Позже здесь будет реальный расчет
-    test_result = {
-        'base_cost': 1000.00,
-        'packaging_cost': 100.00,
-        'services_cost': 300.00,
-        'discount': 50.00,
-        'total_cost': 1350.00
-    }
-
-    # Выводим результат
-    input_output.show_result(test_result)
-
-    print("\nПрограмма завершена. Спасибо за использование!")
 
 if __name__ == "__main__":
     main()

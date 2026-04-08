@@ -1,0 +1,22 @@
+# Проверяем статус
+git status
+
+# Добавляем файлы
+git add src/calculator.py
+git add tests/test_calculator.py
+git add src/main.py
+
+# Делаем коммит
+git commit -m "feat: implement calculator module with full logic (pairs 7-8)
+
+- Add real price calculation for flowers (rose, tulip, chrysanthemum)
+- Add packaging cost calculation (ribbon, paper, basket)
+- Add services cost calculation (delivery, card)
+- Add helper functions for getting names and prices
+- Add calculate_full_price function for complete calculation
+- Add comprehensive unit tests (20+ test cases)
+- Update main.py to use real calculator module
+- All edge cases handled (min/max quantity, invalid inputs)"
+
+# Отправляем на GitHub
+git push
