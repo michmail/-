@@ -52,11 +52,14 @@ def run_calculator():
             # Промежуточная сумма
             subtotal = base_cost + packaging_cost + services_cost
 
-            # Расчет скидки
+            print("\n--- РАСЧЕТ СКИДОК ---")
+
+            # Расчет скидки (обновленная версия)
             discount_amount = discounts.calculate_discount(
                 user_data['quantity'],
                 user_data['self_pickup'],
-                subtotal
+                subtotal,
+                flower_type=user_data['flower_type']  # для сезонной скидки
             )
 
             # Итоговая стоимость
